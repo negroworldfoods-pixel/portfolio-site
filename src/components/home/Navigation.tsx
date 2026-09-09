@@ -5,6 +5,7 @@ import { infoData } from "@/constants/assets";
 import MenuButton from "./MenuButton";
 import { useSidebarStore } from "@/stores/useSidebarStore";
 import { motion, AnimatePresence } from "framer-motion";
+import { useState, useEffect } from "react";
 import {
   Instagram,
   Google,
@@ -12,46 +13,109 @@ import {
   Call,
   GlobalSearch,
 } from "iconsax-reactjs";
+import RolloverText from "../effects/rolloverText";
+import { usePathname } from "next/navigation";
 
 const navLinks = [
-  { href: "#", label: "Home" },
-  { href: "#about", label: "About" },
-  { href: "#contact", label: "Contact" },
-  { href: "#business", label: "Business" },
+  { href: "/", label: "Home" },
+  { href: "/#about", label: "About" },
+  { href: "/contact", label: "Contact" },
+  { href: "/#business", label: "Business" },
 ];
 
 export function NavBar() {
+  const [isVisible, setIsVisible] = useState(true);
+  const [isScrolled, setIsScrolled] = useState(false);
+  const [lastScrollY, setLastScrollY] = useState(0);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
+
+      // Check if scrolled past 5px
+      setIsScrolled(currentScrollY > 5);
+
+      // Headroom effect - hide on scroll down, show on scroll up
+      if (currentScrollY > lastScrollY) {
+        // Scrolling down
+        setIsVisible(false);
+      } else {
+        // Scrolling up
+        setIsVisible(true);
+      }
+
+      setLastScrollY(currentScrollY);
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, [lastScrollY]);
+  const pathName = usePathname();
+  const isHomePage = pathName === "/";
+
   return (
-    <header className="fixed top-0 inset-x-0 z-40 backdrop-blur-sm bg-black/50 backdrop-grayscale-25">
-      <nav className="flex items-center justify-between px-4 sm:px-6 md:px-12 lg:px-20 py-3.5 bg-[--bg] md:bg-transparent border-b-2 border-zinc-50/5">
+    <motion.header
+      initial={{ y: 0 }}
+      animate={{ y: isVisible ? 0 : "-100%" }}
+      transition={{ duration: 0.3, ease: "easeInOut" }}
+      className={`fixed top-0 inset-x-0 z-40 transition-all duration-300 ${
+        isScrolled
+          ? "backdrop-blur-sm bg-black/50 backdrop-grayscale-25"
+          : !isHomePage
+            ? "bg-black/60 backdrop-blur-none"
+            : "bg-transparent backdrop-blur-none"
+      }`}
+    >
+      <nav
+        className={`flex items-center justify-between px-4 sm:px-6 md:px-12 lg:px-16 py-2.5 transition-all duration-300 ${
+          isScrolled
+            ? "bg-[--bg] md:bg-transparent border-b-2 border-zinc-50/5"
+            : !isHomePage
+              ? "bg-black/50 md:bg-black/50 border-b-2 border-transparent"
+              : "bg-transparent md:bg-transparent border-b-2 border-transparent"
+        }`}
+      >
         <Link
           href="#"
-          className="font-[family-name:var(--font-belleza)] text-lg tracking-wide text-[--ink] hover:opacity-80 transition-opacity"
+          className="font-[family-name:var(--font-belleza)] text-sm tracking-wide text-[--ink] hover:opacity-80 transition-opacity"
         >
           <span className="hidden md:inline">{infoData.name}</span>
           <span className="md:hidden">{infoData.name.split(" ")[0]}</span>
         </Link>
 
         {/* Desktop links */}
-        <div className="hidden md:flex items-center gap-6 text-sm tracking-[0.1em] uppercase text-[--ink]">
+        <div className="hidden md:flex items-center gap-6 text-sm mt-1 tracking-[0.1em] uppercase text-[--ink]">
           {navLinks
-            .filter((link) => link.href !== "#")
+            .filter((link) => link.href !== "/")
             .map((link) => (
-              <a
+              <Link
                 key={link.href}
                 href={link.href}
-                className="hover:opacity-70 transition-opacity"
+                className="transition-opacity text-xs"
               >
-                {link.label}
-              </a>
+                <RolloverText
+                  text={link.label}
+                  className="text-xs"
+                  duration={0.4}
+                  direction="up"
+                />
+              </Link>
             ))}
           <a
             href={infoData.instagram}
             target="_blank"
             rel="noopener noreferrer"
-            className="hover:opacity-70 transition-opacity"
+            className="text-xs"
           >
-            Instagram
+            <RolloverText
+              text="Instagram"
+              className="text-xs"
+              duration={0.4}
+              direction={"up"}
+            />
           </a>
         </div>
 
@@ -63,7 +127,7 @@ export function NavBar() {
 
       {/* Dropdown panel, anchored under the navbar */}
       <MobileMenu />
-    </header>
+    </motion.header>
   );
 }
 
@@ -78,7 +142,7 @@ export const MobileMenu = () => {
           animate={{ height: "auto", opacity: 1 }}
           exit={{ height: 0, opacity: 0 }}
           transition={{ duration: 0.3, ease: "easeInOut" }}
-          className="md:hidden overflow-hidden bg-black/50 border-b border-white/10"
+          className="md:hidden overflow-hidden bg-black/50 border-b backdrop-blur-sm border-white/10"
         >
           <motion.div
             className="flex flex-col items-center gap-3 py-8"

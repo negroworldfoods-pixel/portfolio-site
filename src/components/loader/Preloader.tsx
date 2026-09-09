@@ -12,8 +12,8 @@ export default function PreLoader() {
   const [isHidden, setIsHidden] = useState(false);
 
   useEffect(() => {
-    const timer = setTimeout(() => setIsLoaded(true), 3000);
-    const hideTimer = setTimeout(() => setIsHidden(true), 3500);
+    const timer = setTimeout(() => setIsLoaded(true), 2400);
+    const hideTimer = setTimeout(() => setIsHidden(true), 2800);
 
     return () => {
       clearTimeout(timer);
@@ -38,9 +38,9 @@ export default function PreLoader() {
             className="signature-img"
           />
         </div>
-        <p className="preloader-name text-sm md:text-base tracking-[0.15em] uppercase text-[--ink]">
+        {/* <p className="preloader-name text-sm md:text-base tracking-[0.15em] uppercase text-[--ink]">
           {NAME}
-        </p>
+        </p> */}
       </div>
     </div>
   );
