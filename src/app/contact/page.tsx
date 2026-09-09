@@ -160,9 +160,8 @@ const ContactPage = () => {
           {/* Header Block */}
           <div className="space-y-3 max-lg:text-center">
             <ScrambleOnHover
-              once={false}
               text="Contact Us"
-              duration={1.8}
+              duration={0.6}
               className="text-xl sm:text-2xl lg:text-3xl font-bold tracking-tight text-zinc-950 uppercase"
             />
             <p className="text-zinc-500 text-sm font-normal">

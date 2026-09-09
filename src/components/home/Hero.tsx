@@ -5,20 +5,36 @@ import Image from "next/image";
 
 const bgImage =
   "https://ozsaxqicerbsltduruog.supabase.co/storage/v1/object/public/portfolio-bucket/background-negro.jpg";
+const bgImageOnPhone =
+  "https://ozsaxqicerbsltduruog.supabase.co/storage/v1/object/public/portfolio-bucket/background-negro-phone%20(2).jpg";
 
 const Hero = () => {
   return (
     <section className="relative min-h-screen bg-zinc-950 text-white pt-24 pb-16 px-6 lg:px-16 overflow-hidden flex flex-col justify-end">
       {/* Background Image Layer with Dark Overlay */}
       <div className="absolute inset-0 mt-0 z-0">
+        {/* Phone background: visible on mobile, hidden on sm and above */}
+        <Image
+          src={bgImageOnPhone}
+          alt="Background Mobile"
+          fill
+          sizes="(max-width: 900px) 100vw, 900px"
+          loading="eager"
+          priority
+          quality={100}
+          className="object-cover object-center opacity-40 block sm:hidden"
+        />
+
+        {/* Desktop background: hidden on mobile, visible on sm and above */}
         <Image
           src={bgImage}
           alt="Background"
           fill
           priority
-          quality={90}
-          className="object-cover lg:object-top object-center opacity-40"
+          quality={100}
+          className="object-cover lg:object-top object-center opacity-40 hidden sm:block"
         />
+
         <div className="absolute inset-0 bg-gradient-to-t from-zinc-950 via-zinc-950/70 to-zinc-950/40" />
       </div>
 
@@ -26,8 +42,6 @@ const Hero = () => {
       <div className="max-w-7xl mx-auto w-full relative z-20 space-y-10 pt-40 md:pt-0">
         {/* Typography Block */}
         <div className="max-w-3xl space-y-6">
-          
-
           <h1 className="text-5xl sm:text-7xl lg:text-8xl font-black tracking-tight text-white uppercase leading-[0.95]">
             Chef & <br />
             <span className="text-zinc-400 font-light italic">Restaurateur</span>

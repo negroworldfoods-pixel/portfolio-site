@@ -55,6 +55,13 @@ export function NavBar() {
   }, [lastScrollY]);
   const pathName = usePathname();
   const isHomePage = pathName === "/";
+  const isContactPage = pathName === "/contact";
+
+  // On the contact route, show Home and hide Contact (since we're already there).
+  // Everywhere else, keep the original behavior of hiding Home from the desktop links.
+  const desktopNavLinks = navLinks.filter((link) =>
+    isContactPage ? link.href !== "/contact" : link.href !== "/"
+  );
 
   return (
     <motion.header
@@ -79,31 +86,28 @@ export function NavBar() {
         }`}
       >
         <Link
-          href="#"
+          href="/"
           className="font-[family-name:var(--font-belleza)] text-sm tracking-wide text-[--ink] hover:opacity-80 transition-opacity"
         >
-          <span className="hidden md:inline">{infoData.name}</span>
-          <span className="md:hidden">{infoData.name.split(" ")[0]}</span>
+          <span className="inline">{infoData.name}</span>
         </Link>
 
         {/* Desktop links */}
         <div className="hidden md:flex items-center gap-6 text-sm mt-1 tracking-[0.1em] uppercase text-[--ink]">
-          {navLinks
-            .filter((link) => link.href !== "/")
-            .map((link) => (
-              <Link
-                key={link.href}
-                href={link.href}
-                className="transition-opacity text-xs"
-              >
-                <RolloverText
-                  text={link.label}
-                  className="text-xs"
-                  duration={0.4}
-                  direction="up"
-                />
-              </Link>
-            ))}
+          {desktopNavLinks.map((link) => (
+            <Link
+              key={link.href}
+              href={link.href}
+              className="transition-opacity text-xs"
+            >
+              <RolloverText
+                text={link.label}
+                className="text-xs"
+                duration={0.4}
+                direction="up"
+              />
+            </Link>
+          ))}
           <a
             href={infoData.instagram}
             target="_blank"
@@ -133,6 +137,14 @@ export function NavBar() {
 
 export const MobileMenu = () => {
   const { isOpen, close } = useSidebarStore();
+  const pathName = usePathname();
+  const isContactPage = pathName === "/contact";
+
+  // Same rule as the desktop links: hide "Contact" while already on the
+  // contact page, but keep "Home" (mobile always includes Home otherwise).
+  const mobileNavLinks = navLinks.filter((link) =>
+    isContactPage ? link.href !== "/contact" : true
+  );
 
   return (
     <AnimatePresence>
@@ -151,7 +163,7 @@ export const MobileMenu = () => {
             exit={{ y: -20 }}
             transition={{ duration: 0.3, ease: "easeInOut" }}
           >
-            {navLinks.map((link) => (
+            {mobileNavLinks.map((link) => (
               <div key={link.href} className="w-full">
                 <Link
                   href={link.href}
